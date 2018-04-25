@@ -1,3 +1,8 @@
+(
+	local modo = Modolize init_path:(DEVTREE_BASEPATH)
+	modo.filein "SkinLib.lib.SkinVertexBone"
+)
+
 /* Class: SkinVertex
 
 	Represents a vertex of a Skin modifier.
@@ -54,7 +59,6 @@ struct SkinVertex (
 	--
 	-- Parameters:
 	-- 	index - <integer> The vertex index to init from.
-	--------------------------------------------------------------------------
 	fn init index = (
 		local ret = SkinHelpers.isSkinModifierSelected()
 		if ret.ret then (
@@ -65,7 +69,7 @@ struct SkinVertex (
 			this._skin       = modPanel.getCurrentObject()
 			this._node       = selection[1]
 			this._selected   = (skinOps.IsVertexSelected this._skin this._v) == 1
-			this._normalized = ((skinOps.isUnNormalizeVertex this._skin this._v) == 0)
+			this._normalized = (skinOps.isUnNormalizeVertex this._skin this._v) == 0
 			this._bonesCount = (skinOps.GetVertexWeightCount this._skin this._v)
 			
 			this._load_bones()
