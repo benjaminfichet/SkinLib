@@ -1,4 +1,3 @@
-print "Sourcing SkinVertexBone"
 /* Struct: SkinVertexBone
 
 	Represents a bone owned by a SkinVertex.

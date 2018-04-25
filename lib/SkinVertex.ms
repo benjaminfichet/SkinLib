@@ -85,8 +85,6 @@ struct SkinVertex (
 	fn reload = (this.init this._v),
 
 
-
-
 	-- Function: safeModifyWeight(weight)
 	-- Loads all the <SkinVertexBone>(s) to this._bones.
 	--------------------------------------------------------------------------
