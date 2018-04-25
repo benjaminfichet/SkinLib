@@ -1,18 +1,30 @@
 /* Class: SkinVertexBone
 
-	Represents a bone owned by a skin's vertex.
-
-	_vertex is the owning vertex
-	_listID is the skin's list bone id
-	_boneID is the true bone id
-	_vertexBoneID is the id of this bone using vertex's indexing
-	_name is the bone name
+	Represents a bone owned by a SkinVertex.
 */
 struct SkinVertexBone (
+
+	-- Variable: _listID
+    -- The list index for this bone
 	_listID       = undefined,
+
+	-- Variable: _boneID
+    -- The true bone index
 	_boneID       = undefined,
+
+	-- Variable: _vertexBoneID
+    -- The bone index for the root vertex
 	_vertexBoneID = undefined,
+
+	-- Variable: _name
+    -- The bone name
 	_name         = undefined,
+
+	-- Variable: _weight
+    -- The bone weight for the root vertex
 	_weight       = undefined,
+
+	-- Variable: _lock_weight
+    -- Are we locking weight on this bone/vertex paur ?
 	_lock_weight  = false
 )
