@@ -109,6 +109,8 @@ struct SkinVertex (
 
 
 
+	-- Mother instance of type SkinModifier
+	_skinModifier = undefined,
 
 	--------------------------------------------------------------------------
 	fn endfunc = ()

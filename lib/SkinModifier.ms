@@ -9,7 +9,6 @@ struct SkinModifierOps (
 
 	_skinmod = undefined,
 
-	fn addBone bn_node redraw:false       = (skinOps.addBone                  this._skinmod._skin bn_node -1),
 	fn addBoneFromViewEnd                 = (skinOps.addBoneFromViewEnd                 this._skinmod._skin),
 	fn addBoneFromViewStart               = (skinOps.addBoneFromViewStart               this._skinmod._skin),
 	fn bakeSelectedVerts                  = (skinOps.bakeSelectedVerts                  this._skinmod._skin),
@@ -42,6 +41,11 @@ struct SkinModifierOps (
 	fn resetSelectedVerts                 = (skinOps.resetSelectedVerts                 this._skinmod._skin),
 	fn selectNextBone                     = (skinOps.selectNextBone                     this._skinmod._skin),
 	fn selectPreviousBone                 = (skinOps.selectPreviousBone                 this._skinmod._skin),
+	fn GetListIDByBoneID bone_id          = (skinOps.GetListIDByBoneID                  this._skinmod._skin bone_id),
+	fn GetBoneIDByListID list_id          = (skinOps.GetBoneIDByListID                  this._skinmod._skin list_id),
+	fn GetBoneName bone_id name_flag:1    = (skinOps.GetBoneName                        this._skinmod._skin bone_id name_flag),
+	fn addBone bn_node redraw:false       = (skinOps.addBone                            this._skinmod._skin bn_node -1),
+	
 
 	on create do ()
 )
@@ -49,27 +53,31 @@ struct SkinModifierOps (
 
 struct SkinModifier (
 
-	-- ctor param
-	init_skin = undefined,
 
-
-	-- class params
+	-- Class Variables
+	-----------------------------------------------
 	_node     = undefined,
 	_skin     = undefined,
 	_vertices = undefined,
 	_bones    = undefined,
 
-	-- skinops
-	ops   = undefined,
+	ops       = undefined, -- skinops
 
+
+
+	-- Public Methods
+	-----------------------------------------------
+	
+	-- Constructor optional params
+	init_skin = undefined,
 
 	-- Constructor
 	on create do (
 		if classof(this.init_skin) == Skin then (this.init this.init_skin)
 	),
 
-	-- init
-	fn init iskin selected_vertices_only:false = (
+	-- Initializer
+	fn init iskin selected_bone_only:false selected_vertices_only:false = (
 		local ret = ReturnCode.new (classof(iskin) == Skin) err_reason:"SkinModifier.init takes a Skin as argument!"
 		if ret.ret then (
 			ret = SkinHelpers.isSkinModifierSelected()
@@ -79,15 +87,31 @@ struct SkinModifier (
 				this._node = selection[1]
 				this._skin = modPanel.getCurrentObject()
 
-				-- load vertices
-				ret = this.__load_vertices selected_vertices_only:selected_vertices_only
+				-- Load Bones
+				ret = this.__load_bones selected_bone_only:selected_bone_only
+				if ret.ret then (
+
+					-- load vertices
+					ret = this.__load_vertices selected_vertices_only:selected_vertices_only
+
+					-- We are initialized if ret.ret == true
+				)
 			)
 		)
 		ret
 	),
-	fn reload selected_vertices_only:false = (this.init this._skin selected_vertices_only:selected_vertices_only),
-	
 
+	-- Reloader
+	fn reload selected_vertices_only:false = (this.init this._skin selected_vertices_only:selected_vertices_only),
+
+
+
+
+
+
+	-- Private Methods
+	-----------------------------------------------
+private
 	fn __load_vertices selected_vertices_only:false = (
 		local ret = ReturnCode ret:false
 		local verticesSet  = #() -- Make vertices set
@@ -95,33 +119,47 @@ struct SkinModifier (
 
 		this._vertices = #()
 		for v in verticesSet do (
-			local sv = SkinVertex init_id:v --sv.init v
+			local sv = SkinVertex init_id:v _skinModifier:this --sv.init v
 			append this._vertices (sv)
 		)
-		(ReturnCode.new (this._vertices.count == verticesSet.count) err_reason:"Something went wrong loading SkinVertex(s)" ok_data:sv_obj)
+		(ReturnCode.new (this._vertices.count == verticesSet.count) err_reason:"Something went wrong loading SkinVertex(s)")
 	),
 
-	fn __load_bones selected_vertices_only:false = (
+	fn __load_bones selected_bone_only:false = (
 		local ret = ReturnCode ret:false
-		
-		this._bones = #()
-		for i=1 to this.ops.GetNumberBones() do (
+		local bCount = this.ops.GetNumberBones()
 
+		this._bones = #()
+		for i=1 to bCount do (
+			
+			local bn = SkinBone init_skin_modifier:this
+			ret = bn.init bone_index:i
+			if ret.ret then (
+				append this._bones bn
+			)
 		)
-		ret
+		(ReturnCode.new (this._bones.count == bCount) err_reason:"Something went wrong loading SkinBone(s)")
 	),
+
 	on create do (this.ops = SkinModifierOps _skinmod:this)
 )
 
+
+
+
+
+
+
+
+
 skMod = SkinModifier()
-res = skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
+skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
 
-
+print skMod._vertices
 
 
 /*
-skinOps.GetBoneName <Skin> <bone_index> <nameflag_index> 
-skinOps.GetListIDByBoneID <Skin> <BoneID_integer>
+
 skinOps.GetBoneIDByBoneID <Skin> <bone_index> <nameflag_index> 
 skinOps.GetBoneIDByListID <Skin> <bone_index> <nameflag_index> 
 skinOps.getNumberCrossSections <Skin> <bone_integer> 
@@ -137,4 +175,4 @@ skinOps.ReplaceVertexWeights <Skin> <vertex_integer> \ ( <vertex_bone_integer> |
 skinOps.SelectBone <Skin> <bone_integer> 
 skinOps.SelectVertices <Skin> \ ( <vertex_integer> | <vertex_array > | <<vertex_bitarray> 
 skinOps.SetWeight <Skin> <weight_float> 
-*
+*/
