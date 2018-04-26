@@ -1,11 +1,13 @@
 # SkinLib
 An object oriented set of classes/structs aiming to replace Max's SkinOps.
 
-###Classes/Structs
+### Classes/Structs
 
-- SkinModifier
-- SkinBone
-- SkinVertex
-- SkinVertexBone
-- SkinHelpers
-- SkinModifierOps
+- SkinModifier    - Main interface
+- SkinBone        - Bone representation (bone_id, list_id, etc..)
+- SkinVertex      - Vertex representation (id, influencing bones, etc..)
+- SkinVertexBone  - Vertex local bone representation 
+- SkinHelpers     - Some helper functions to work with 3dsmax Skins
+- SkinModifierOps - Regular SkinOps functions are available as methods from here!
+
+***SkinLib*** is very wip! Large parts are to be implemented, any help is appreciated! 
