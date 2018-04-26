@@ -1,18 +1,22 @@
 struct SkinBone (
+private
+	_owner_skinmod = undefined,
+
 
 public
 
-	-- Variable: _listID
-    -- The list index for this bone
-	_listID       = undefined,
+	-- Variable: _name
+    -- The bone name
+	_name         = undefined,
 
 	-- Variable: _boneID
     -- The true bone index
 	_boneID       = undefined,
 
-	-- Variable: _name
-    -- The bone name
-	_name         = undefined,
+
+	-- Variable: _listID
+    -- The list index for this bone
+	_listID       = undefined,
 
 
 	-- Contructor parameters
@@ -20,7 +24,7 @@ public
 
 	-- Constructor
 	on create do (
-		if this.init_skin_modifier != undefined then (this._skinModifier = this.init_skin_modifier)
+		if this.init_skin_modifier != undefined then (this._owner_skinmod = this.init_skin_modifier)
 	),
 
 	-- Initializer
@@ -38,6 +42,22 @@ public
 		ret
 	),
 
+	-- Returns the SkinVertex(s) influenced by this SkinBone
+	fn getInfluencedVertices = (
+		local ret = ReturnCode.new (this._owner_skinmod != undefined) err_reason:"SkinBone.getInfluencedVertices() need _owner_skinmod to be defined! (_setSkinModifier())"
+		if ret.ret then (
+			local verts = #()
+			for skinVert in this._owner_skinmod._vertices do (
+				for vBone in skinVert._bones do (
+					if (vBone._name as name) == (this._name as name) then (
+						append verts skinVert
+					) 
+				)
+			)
+			ret.data = verts
+		)
+		ret
+	),
 
 	fn asString = (
 		local s = "" as StringStream
@@ -45,17 +65,13 @@ public
 		(s as string)
 	),
 
-	fn _getSkinModifier    = (this._skinModifier),
-	fn _setSkinModifier sm = (this._skinModifier = sm),
-
-private
 	-- tRUE INITIALIZERS
 	fn init_by_bone_id   id = (
 		local ret = this._is_range_valid_index id
 		if ret.ret then (
 			this._boneID = id
-			this._listID = this._skinModifier.ops.GetListIDByBoneID id
-			this._name   = (this._skinModifier.ops.GetBoneName id) as name
+			this._listID = this._owner_skinmod.ops.GetListIDByBoneID id
+			this._name   = (this._owner_skinmod.ops.GetBoneName id) as name
 		)
 		ret
 	),
@@ -63,8 +79,8 @@ private
 		local ret = this._is_range_valid_index id
 		if ret.ret then (
 			this._listID = id 
-			this._boneID = this._skinModifier.ops.GetBoneIDByListID id
-			this._name   = (this._skinModifier.ops.GetBoneName this._boneID) as name
+			this._boneID = this._owner_skinmod.ops.GetBoneIDByListID id
+			this._name   = (this._owner_skinmod.ops.GetBoneName this._boneID) as name
 		)
 		ret
 	),
@@ -72,8 +88,8 @@ private
 		local ret = ReturnCode.new (classof(nm) == Name or classof(nm) == String) err_reason:"Invalid arg passed SkinBone.init_by_bone_name!"
 		if ret.ret then (
 			local idx = -1
-			for i=1 to (this._skinModifier.ops.GetNumberBones()) do (
-				if (((this._skinModifier.ops.GetBoneName i) as name) == nm) then (idx = i)
+			for i=1 to (this._owner_skinmod.ops.GetNumberBones()) do (
+				if (((this._owner_skinmod.ops.GetBoneName i) as name) == nm) then (idx = i)
 			)
 
 			ret = ReturnCode.new (idx > 0) -- err_reason:"Unable to initialize from: " + nm as string + " (bone not found)!"
@@ -82,26 +98,28 @@ private
 
 				this._name   = nm as name
 				this._boneID = idx
-				this._listID = this._skinModifier.ops.GetListIDByBoneID idx
+				this._listID = this._owner_skinmod.ops.GetListIDByBoneID idx
 			)
 		)
 		ret
 	),
-	fn _is_range_valid_index i = (ReturnCode.new ((i > 0) and (i <= this._skinModifier.ops.GetNumberBones())) err_reason:"Invalid bone index range!"),
 
+	fn _getSkinModifier    = (this._owner_skinmod),
+	fn _setSkinModifier sm = (this._owner_skinmod = sm),
 
 private
-	_skinModifier = undefined,
+	fn _is_range_valid_index i = (ReturnCode.new ((i > 0) and (i <= this._owner_skinmod.ops.GetNumberBones())) err_reason:"Invalid bone index range!"),
 
 	fn end = ()
 )
 
 
 --skMod = SkinModifier()
---res = skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
+--res = skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
 --
---skb = SkinBone _skinModifier:skMod
+--skb = SkinBone init_skin_modifier:skMod
 --
 --skb.init bone_index:1
 --skb.init list_index:1
---skb.init bone_name:#ch_lewis_b00a_ctrl_l_elbow_art_bot
+----skb.init bone_name:#ch_lewis_b00a_help_spine_bone_02
+--skb.getInfluencedVertices()

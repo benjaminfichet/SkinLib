@@ -9,6 +9,8 @@
 */
 struct SkinVertex (
 
+	-- Mother instance of type SkinModifier
+	_skinModifier = undefined,
 
 	-- Variable: init_id
     -- The constructor optional parameter
@@ -91,6 +93,26 @@ struct SkinVertex (
 	fn safeModifyWeight w = (throw ("\n\n+ To Implement! +\n\n")),
 
 
+	-- Function: getVertexBoneForSkinBone(sbone)
+	-- Returns the local vertex's bone for the given <sbone> SkinBone.
+	--------------------------------------------------------------------------
+	fn getVertexBoneForSkinBone sbone = (this.getVertexBoneByBoneID sbone._boneID),
+
+
+	fn getVertexBoneBy type rvalue = (
+		local arr = undefined
+		case type of (
+			#name:   (arr = for b in this._bones where (b._name as name)   == (rvalue as name) collect b)
+			#bone_id:(arr = for b in this._bones where (b._boneID)         == (rvalue) collect b)
+			#list_id:(arr = for b in this._bones where (b._listID)         == (rvalue) collect b)
+		)
+		(ReturnCode.new (arr.count > 0) err_reason:("No VertexBone found with the type:#"+(type as string) + " with a rvalue of: "+(rvalue as string)) ok_data:arr[1])
+	),
+	fn getVertexBoneByName   nm = (this.getVertexBoneBy #name nm),
+	fn getVertexBoneByBoneID id = (this.getVertexBoneBy #bone_id id),
+	fn getVertexBoneByListID id = (this.getVertexBoneBy #list_id id),
+
+
 
 	-- Function: _load_bones()
 	-- *Private*: Loads all the <SkinVertexBone>(s) to this._bones.
@@ -98,20 +120,43 @@ struct SkinVertex (
 	fn _load_bones = (
 		for i=1 to this._bonesCount do (
 			local bonID   = (skinOps.GetVertexWeightBoneID this._skin this._v i)
-			local bnmodel = (SkinVertexBone _vertexBoneID:i \
+
+			-- Cross with the correct SkinBone already loaded!
+			local sBone = _skinModifier.getSkinBoneByBoneID bonID
+			sBone       = if sBone.ret then (sBone.data) else (-1) 
+			
+
+			local bnmodel = (SkinVertexBone _skinVertex:this \
+											_vertexBoneID:i \
 											_boneID:bonID \
 											_listID:(skinOps.GetListIDByBoneID this._skin bonID) \
-											_name:(skinOps.GetBoneName this._skin bonID 0) \
-											_weight:(skinops.getvertexweight this._skin this._v i))
+											_name:((skinOps.GetBoneName this._skin bonID 0) as name) \
+											_weight:(skinops.getvertexweight this._skin this._v i) \
+											_skinBone:sBone)
 			append this._bones bnmodel
 		)
 	),
 
-
-
-	-- Mother instance of type SkinModifier
-	_skinModifier = undefined,
-
 	--------------------------------------------------------------------------
 	fn endfunc = ()
 )
+
+--skMod = SkinModifier()
+--skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
+--
+--
+--
+--sv = SkinVertex init_id:9 _skinModifier:skMod
+--sv.getVertexBoneByName "ch_lewis_b00a_help_spine_bone_05"
+--
+--
+--
+--skb = SkinBone init_skin_modifier:skMod
+--skb.init bone_index:1
+--
+--
+--svb = sv.getVertexBoneForSkinBone skb
+--
+--print svb.data
+--print skb
+--0

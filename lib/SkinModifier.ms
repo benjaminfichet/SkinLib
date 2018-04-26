@@ -1,8 +1,9 @@
 (
 	local modo = Modolize init_path:(DEVTREE_BASEPATH)
-	modo.filein "SkinLib.lib.SkinHelpers"
-	modo.filein "SkinLib.lib.SkinBone"
-	modo.filein "SkinLib.lib.SkinVertex"
+	
+	print (modo.filein "SkinLib.lib.SkinHelpers")
+	print (modo.filein "SkinLib.lib.SkinBone")
+	print (modo.filein "SkinLib.lib.SkinVertex")
 )
 
 struct SkinModifierOps (
@@ -105,7 +106,18 @@ struct SkinModifier (
 	fn reload selected_vertices_only:false = (this.init this._skin selected_vertices_only:selected_vertices_only),
 
 
-
+	fn getSkinBoneBy type rvalue = (
+		local arr = undefined
+		case type of (
+			#name:   (arr = for b in this._bones where (b._name as name)   == (rvalue as name) collect b)
+			#bone_id:(arr = for b in this._bones where (b._boneID)         == (rvalue) collect b)
+			#list_id:(arr = for b in this._bones where (b._listID)         == (rvalue) collect b)
+		)
+		(ReturnCode.new (arr.count > 0) err_reason:("No SkinBone found with the type:#"+(type as string) + " with a rvalue of: "+(rvalue as string)) ok_data:arr[1])
+	),
+	fn getSkinBoneByName   nm = (this.getSkinBoneBy #name nm),
+	fn getSkinBoneByBoneID id = (this.getSkinBoneBy #bone_id id),
+	fn getSkinBoneByListID id = (this.getSkinBoneBy #list_id id),
 
 
 
@@ -145,17 +157,10 @@ private
 )
 
 
-
-
-
-
-
-
-
 skMod = SkinModifier()
-skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
-
-print skMod._vertices
+skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
+--
+--print skMod._vertices
 
 
 /*
