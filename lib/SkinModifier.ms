@@ -145,37 +145,37 @@ struct SkinModifier (
 
 	/* group: Public methods */
 	/* Function: getSkinBone
-			Selects SkinBone(s) by type and value
+		Returns a SkinBone by its name or its bone_index. You can not retrieve a SkinBone using a list_index using this method. Use getSkinBoneBy #list_id instead.
 
-		   Parameters:
+	   Parameters:
 
-		    	bn_identifier: - The bone identifier, can be an int or a string/name
+	    	bn_identifier: - The bone identifier, can be an int or a string/name
 
-		    Notes:
-		    You can not select bone by list_id from here, use getSkinBoneBy #list_id myID instead
-	    	--- Code
-			ret = getSkinBone "aBoneName"  -- Will select a bone named "aBoneName"
-			ret = getSkinBone 1            -- Will select the bone with the bone_id 1
-			ret = getSkinBoneBy #list_id 1 -- Use getSkinBoneBy to select from the list id
-			---
+	    Notes:
+	    You can not select bone by list_id from here, use getSkinBoneBy #list_id myID instead
+    	--- Code
+		ret = getSkinBone "aBoneName"  -- Will select a bone named "aBoneName"
+		ret = getSkinBone 1            -- Will select the bone with the bone_id 1
+		ret = getSkinBoneBy #list_id 1 -- Use getSkinBoneBy to select from the list id
+		---
 
-		   Returns:
+	   Returns:
 
-		    	ReturnCode
-		*/
-		fn getSkinBone bn_identifier = (
-			local cls = classof(bn_identifier)
-			local ret = ReturnCode.new (cls == integer or cls == string or cls == name or cls == SkinBone) err_reason:"Invalid in value!"
-			if ret.ret then (
-				case cls of (
-					(integer): (ret = this.getSkinBoneBy #bone_id bn_identifier)
-					(string):  (ret = this.getSkinBoneBy #name bn_identifier)
-					(name):    (ret = this.getSkinBoneBy #name bn_identifier)
-					(SkinBone):(ret = this.getSkinBoneBy #bone_id bn_identifier._boneID)
-				)
+	    	ReturnCode
+	*/
+	fn getSkinBone bn_identifier = (
+		local cls = classof(bn_identifier)
+		local ret = ReturnCode.new (cls == integer or cls == string or cls == name or cls == SkinBone) err_reason:"Invalid in value!"
+		if ret.ret then (
+			case cls of (
+				(integer): (ret = this.getSkinBoneBy #bone_id bn_identifier)
+				(string):  (ret = this.getSkinBoneBy #name bn_identifier)
+				(name):    (ret = this.getSkinBoneBy #name bn_identifier)
+				(SkinBone):(ret = this.getSkinBoneBy #bone_id bn_identifier._boneID)
 			)
-			ret
-		),
+		)
+		ret
+	),
 
 
 
@@ -218,14 +218,19 @@ struct SkinModifier (
 		(ReturnCode ret:true data:data)
 	),
 
+	/* Function: getSkinVertexByID
+		Returns a SkinVertex given an id.
 
+	   Parameters:
+	    	id: - Integer to get the vertex from.
 
-
+	   Returns:
+	    	ReturnCode
+	*/	
 	fn getSkinVertexByID id = (
 		local arr = for v in this._vertices where v._v == id collect v
 		(ReturnCode.new (arr.count > 0) err_reason:("No SkinVertex found with the id:#"+(id as string) + "!") ok_data:arr[1])
 	),
-
 
 	/* Function: addBone
 		Adds a new bone to the skin modifier. 
@@ -244,7 +249,7 @@ struct SkinModifier (
 
 	    	ReturnCode
 	*/	
-	fn addBone wannaBeBone redraw:false force:false = (
+	fn addBone wannaBeBone redraw:false force:false reload_skinmodifier:true = (
 		local nd = undefined
 		if (isKindof wannaBeBone Node) do (nd = wannaBeBone)
 		if (classof(wannaBeBone) == string or classOf(wannaBeBone) == name) do (nd = getNodeByName (wannaBeBone as string))
@@ -259,7 +264,9 @@ struct SkinModifier (
 				if ret.ret then (
 		
 					ret.ret = (this.ops.addBone nd redraw:redraw) == OK
-					this.reload()
+
+					-- In case we are importing a large bone set, we'll reload at the end!
+					if reload_skinmodifier == true then (this.reload())
 				)
 			)
 		)
@@ -281,11 +288,11 @@ struct SkinModifier (
 
 	    	ReturnCode
 	*/	
-	fn removeSkinBone b = (
+	fn removeSkinBone b reload_skinmodifier:true = (
 		local ret = getSkinBone b
 		if ret.ret then (
 			skinOps.removebone this._skin ret.data._boneID
-			this.reload()
+			if reload_skinmodifier == true then (this.reload())
 		)
 		ret
 	),
@@ -308,53 +315,97 @@ struct SkinModifier (
 		ret
 	),
 
-	/* 
-		Maxscript's SkinOps Interface 
-		Notes: The prototypes are the same, but :
+	/* group: SkinOps Interface
+		The is mostly the same as the original SkinOps interface. You can refer to 3dsmax's doc for the most part.
+
+		Notes:
 			- you don't need to pass the <Skin> parameter
-			- an int, a name, or a SkinBone can be passed when a Bone_ID is required.
+			- an int, a name/string, or a SkinBone can be passed when a Bone_ID is originally required.
+
+		List: The methods list
+			- GetSelectedBone
+			- GetNumberBones
+			- GetNumberVertices
+			- resetSelectedBone
+			- resetSelectedVerts
+			- addBoneFromViewEnd
+			- addBoneFromViewStart
+			- bakeSelectedVerts
+			- buttonAdd
+			- buttonAddCrossSection
+			- buttonAddGizmo
+			- buttonCopyGizmo
+			- buttonExclude
+			- buttonInclude
+			- buttonPaint
+			- buttonPasteGizmo
+			- buttonRemove
+			- buttonRemoveCrossSection
+			- buttonRemoveGizmo
+			- buttonSelectExcluded
+			- buttonWeightTable
+			- copySelectedBone
+			- getCurrentSelectGizmoType
+			- getNumberOfGizmos
+			- getNumberOfGizmoTypes
+			- getSelectedBonePropEnvelopeVisible
+			- getSelectedBonePropFalloff
+			- getSelectedBonePropRelative
+			- getSelectedGizmo
+			- multiRemove
+			- paintOptionsButton
+			- paintOptionsButton
+			- paintWeightsButton
+			- pasteToAllBones
+			- pasteToSelectedBone
+			- RemoveCrossSection
+			- resetAllBones
+			- selectEndPoint
+			- selectNextBone
+			- selectPreviousBone
+			- selectStartPoint
+			- WeightTool
+			- isWeightToolOpen
+			- closeWeightTool
+			- addCrossSection
+			- Invalidate
+			- isRigidHandle
+			- rigidHandle
+			- selectCrossSection
+			- selectGizmo
+			- selectGizmoType
+			- SetWeight
+			- ZoomToBone
+			- ZoomToGizmo
+			- pasteAllBones
+			- pasteAllVerts
+			- enableGizmo
+			- getBonePropFalloff
+			- getBonePropRelative
+			- getEndPoint
+			- getNumberCrossSections
+			- getStartPoint
+			- getBonePropEnvelopeVisible
+			- setBonePropEnvelopeVisible
+			- setBonePropFalloff
+			- setBonePropRelative
+			- setSelectedBonePropEnvelopeVisible
+			- setSelectedBonePropFalloff
+			- setSelectedBonePropRelative
+			- SetEndPoint
+			- SetStartPoint
+			- GetCrossSectionU
+			- GetInnerRadius
+			- GetOuterRadius
+			- SetCrossSectionU
+			- SetInnerRadius
+			- SetOuterRadius
 	*/
-
-	fn _executeSkinOpsByBoneID op bon arg2:false arg3:false arg4:false = (
-		local ret = this.getSkinBone bon
-		local exe = undefined
-		if ret.ret then (
-			case op of (
-				#getBonePropEnvelopeVisible         : (skinOps.getBonePropEnvelopeVisible)
-				#getBonePropFalloff                 : (skinOps.getBonePropFalloff)
-				#getBonePropRelative                : (skinOps.getBonePropRelative)
-				#getEndPoint                        : (skinOps.getEndPoint)
-				#getNumberCrossSections             : (skinOps.getNumberCrossSections)
-				#getStartPoint                      : (skinOps.getStartPoint)
-				#GetCrossSectionU                   : (skinOps.GetCrossSectionU)
-				#GetInnerRadius                     : (skinOps.GetInnerRadius)
-				#GetOuterRadius                     : (skinOps.GetOuterRadius)
-				#setBonePropEnvelopeVisible         : (skinOps.setBonePropEnvelopeVisible)
-				#setBonePropFalloff                 : (skinOps.setBonePropFalloff)
-				#setBonePropRelative                : (skinOps.setBonePropRelative)
-				#setSelectedBonePropEnvelopeVisible : (skinOps.setSelectedBonePropEnvelopeVisible)
-				#setSelectedBonePropFalloff         : (skinOps.setSelectedBonePropFalloff)
-				#setSelectedBonePropRelative        : (skinOps.setSelectedBonePropRelative)
-				#SetEndPoint                        : (skinOps.SetEndPoint)
-				#SetStartPoint                      : (skinOps.SetStartPoint)
-				#SetCrossSectionU                   : (skinOps.SetCrossSectionU)
-				#SetInnerRadius                     : (skinOps.SetInnerRadius)
-				#SetOuterRadius                     : (skinOps.SetOuterRadius)
-			)
-			if (arg2 == false) and (arg3 == false) and (arg4 == false) then (ret.ret = exe ret.data._boneID)
-			if (arg2 != false) and (arg3 == false) and (arg4 == false) then (ret.ret = exe ret.data._boneID arg2)
-			if (arg2 != false) and (arg3 != false) and (arg4 == false) then (ret.ret = exe ret.data._boneID arg2 arg3)
-			if (arg2 != false) and (arg3 != false) and (arg4 != false) then (ret.ret = exe ret.data._boneID arg2 arg3 arg4)
-		)
-		ret
-	),
-
 	fn GetSelectedBone                               = (skinOps.GetSelectedBone                                this._skin),
 	fn GetNumberBones                                = (skinOps.GetNumberBones                                 this._skin),
 	fn GetNumberVertices                             = (skinOps.GetNumberVertices                              this._skin),
 	fn resetSelectedBone                             = (skinOps.resetSelectedBone                              this._skin),
 	fn resetSelectedVerts                            = (skinOps.resetSelectedVerts                             this._skin),
-	
 	fn addBoneFromViewEnd                            = (skinOps.addBoneFromViewEnd                             this._skin),
 	fn addBoneFromViewStart                          = (skinOps.addBoneFromViewStart                           this._skin),
 	fn bakeSelectedVerts                             = (skinOps.bakeSelectedVerts                              this._skin),
@@ -432,6 +483,64 @@ struct SkinModifier (
 
 	/* group: Private methods */
 private
+
+	/* Function: _executeSkinOpsByBoneID
+		*PRIVATE* Executes a skinOps function base on #op, on a given <bon:name/id/SkinBone>, with variable params count.
+
+	   Parameters:
+	    	op: - The function to call. ex:#getNumberCrossSections  
+	    	bon: - The bone. (name/id/SkinBone)
+	    	arg2:false - In case more arguments are needed
+	    	arg3:false - In case more arguments are needed
+	    	arg4:false - In case more arguments are needed
+
+	   Returns:
+	    	ReturnCode
+	*/	
+	fn _executeSkinOpsByBoneID op bon arg2:false arg3:false arg4:false = (
+		local ret = this.getSkinBone bon
+		local exe = undefined
+		if ret.ret then (
+			case op of (
+				#getBonePropEnvelopeVisible         : (skinOps.getBonePropEnvelopeVisible)
+				#getBonePropFalloff                 : (skinOps.getBonePropFalloff)
+				#getBonePropRelative                : (skinOps.getBonePropRelative)
+				#getEndPoint                        : (skinOps.getEndPoint)
+				#getNumberCrossSections             : (skinOps.getNumberCrossSections)
+				#getStartPoint                      : (skinOps.getStartPoint)
+				#GetCrossSectionU                   : (skinOps.GetCrossSectionU)
+				#GetInnerRadius                     : (skinOps.GetInnerRadius)
+				#GetOuterRadius                     : (skinOps.GetOuterRadius)
+				#setBonePropEnvelopeVisible         : (skinOps.setBonePropEnvelopeVisible)
+				#setBonePropFalloff                 : (skinOps.setBonePropFalloff)
+				#setBonePropRelative                : (skinOps.setBonePropRelative)
+				#setSelectedBonePropEnvelopeVisible : (skinOps.setSelectedBonePropEnvelopeVisible)
+				#setSelectedBonePropFalloff         : (skinOps.setSelectedBonePropFalloff)
+				#setSelectedBonePropRelative        : (skinOps.setSelectedBonePropRelative)
+				#SetEndPoint                        : (skinOps.SetEndPoint)
+				#SetStartPoint                      : (skinOps.SetStartPoint)
+				#SetCrossSectionU                   : (skinOps.SetCrossSectionU)
+				#SetInnerRadius                     : (skinOps.SetInnerRadius)
+				#SetOuterRadius                     : (skinOps.SetOuterRadius)
+			)
+			if (arg2 == false) and (arg3 == false) and (arg4 == false) then (ret.ret = exe ret.data._boneID)
+			if (arg2 != false) and (arg3 == false) and (arg4 == false) then (ret.ret = exe ret.data._boneID arg2)
+			if (arg2 != false) and (arg3 != false) and (arg4 == false) then (ret.ret = exe ret.data._boneID arg2 arg3)
+			if (arg2 != false) and (arg3 != false) and (arg4 != false) then (ret.ret = exe ret.data._boneID arg2 arg3 arg4)
+		)
+		ret
+	),
+
+
+	/* Function: __load_vertices
+		*PRIVATE* Load the array of ._vertices with SkinVertex on init.
+
+	   Parameters:
+	    	selected_vertices_only: - Set to true to only load selected vertices.
+
+	   Returns:
+	    	ReturnCode
+	*/	
 	fn __load_vertices selected_vertices_only:false = (
 		local ret = ReturnCode ret:false
 		local verticesSet  = #() -- Make vertices set
@@ -445,6 +554,15 @@ private
 		(ReturnCode.new (this._vertices.count == verticesSet.count) err_reason:"Something went wrong loading SkinVertex(s)")
 	),
 
+	/* Function: __load_bones
+		*PRIVATE* Load the array of ._vertices with SkinVertex on init.
+
+	   Parameters:
+	    	selected_bone_only: - Set to true to only load selected bones. (IRRELEVANT!)
+
+	   Returns:
+	    	ReturnCode
+	*/
 	fn __load_bones selected_bone_only:false = (
 		local ret = ReturnCode ret:false
 		local bCount = this.ops.GetNumberBones()
