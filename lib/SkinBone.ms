@@ -17,7 +17,7 @@ public
 	_name         = undefined,
 
 	-- Variable: _boneID
-    -- The true bone index
+    -- The true bone index 
 	_boneID       = undefined,
 
 
@@ -97,8 +97,8 @@ public
 		local ret = this._is_range_valid_index id
 		if ret.ret then (
 			this._boneID = id
-			this._listID = this._skInt.ops.GetListIDByBoneID id
-			this._name   = (this._skInt.ops.GetBoneName id) as name
+			this._listID = (skinOps.GetListIDByBoneID this._skInt._skin id) --this._skInt.ops.GetListIDByBoneID id
+			this._name   = (skinOps.GetBoneName this._skInt._skin id -1) as name --(this._skInt.ops.GetBoneName id) as name
 		)
 		ret
 	),
@@ -110,8 +110,8 @@ public
 		local ret = this._is_range_valid_index id
 		if ret.ret then (
 			this._listID = id 
-			this._boneID = this._skInt.ops.GetBoneIDByListID id
-			this._name   = (this._skInt.ops.GetBoneName this._boneID) as name
+			this._boneID = (skinOps.GetBoneIDByListID this._skInt._skin id) --this._skInt.ops.GetBoneIDByListID id
+			this._name   = (skinOps.GetBoneName this._skInt._skin this._boneID -1) as name--(this._skInt.ops.GetBoneName this._boneID) as name
 		)
 		ret
 	),
@@ -123,8 +123,10 @@ public
 		local ret = ReturnCode.new (classof(nm) == Name or classof(nm) == String) err_reason:"Invalid arg passed SkinBone.init_by_bone_name!"
 		if ret.ret then (
 			local idx = -1
-			for i=1 to (this._skInt.ops.GetNumberBones()) do (
-				if (((this._skInt.ops.GetBoneName i) as name) == nm) then (idx = i)
+			for i=1 to (skinOps.GetNumberBones this._skInt._skin) do (
+			--for i=1 to (this._skInt.ops.GetNumberBones()) do (
+				if (((skinOps.GetBoneName this._skInt._skin i -1) as name) == nm) then (idx = i)
+				--if (((this._skInt.ops.GetBoneName i) as name) == nm) then (idx = i)
 			)
 
 			ret = ReturnCode.new (idx > 0) -- err_reason:"Unable to initialize from: " + nm as string + " (bone not found)!"
@@ -133,7 +135,7 @@ public
 
 				this._name   = nm as name
 				this._boneID = idx
-				this._listID = this._skInt.ops.GetListIDByBoneID idx
+				this._listID = skinOps.GetListIDByBoneID this._skInt._skin idx --this._skInt.ops.GetListIDByBoneID idx
 			)
 		)
 		ret
@@ -159,7 +161,7 @@ private
     -- Function: _is_range_valid_index(i)
 	-- 	Checks that the given id is in the range 0..bone_count
 	--------------------------------------------------------------------------
-	fn _is_range_valid_index i = (ReturnCode.new ((i > 0) and (i <= this._skInt.ops.GetNumberBones())) err_reason:"Invalid bone index range!"),
+	fn _is_range_valid_index i = (ReturnCode.new ((i > 0) and (i <= (skinOps.GetNumberBones this._skInt._skin))) err_reason:"Invalid bone index range!"),
 
 	fn end = ()
 )

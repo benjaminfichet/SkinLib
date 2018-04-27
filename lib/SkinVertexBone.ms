@@ -17,15 +17,15 @@ struct SkinVertexBone (
 	_lock_weight  = false,
 
 	-- Variable: _vertexBoneID
-    -- The bone index for the root vertex
+    -- *DEPRECATED* use ._skinVertex | The bone index for the root vertex
 	_vertexBoneID = undefined,
 
 	-- Variable: _boneID
-    -- The true bone index
-	_boneID       = undefined,
+    -- *DEPRECATED* use ._skinBone | The true bone index 
+	_boneID       = undefined, 
 
 	-- Variable: _listID
-    -- The list index for this bone ! DEPRECATED AS WE KNOW REFER TO _skinBone directly!
+    -- *DEPRECATED* use ._skinBone | The list index for this bone 
 	_listID       = undefined,
 
 	-- Variable: _skinVertex

@@ -48,29 +48,6 @@ struct SkinInterface (
     -- Constructor param, if this is set at SkinInterface creation, the init method is automatically called with it
 	init_skin = undefined,
 
-
-	/* group: Class variables */
-	-- Variable: _node
-    -- The node holding the skin modifier
-	_node     = undefined,
-
-	-- Variable: _skin
-    -- The inner skin modifier
-	_skin     = undefined,
-
-	-- Variable: _vertices
-    -- An array of SkinVertex(s), initialized at SkinInterface.init()
-	_vertices = undefined,
-
-	-- Variable: _bones
-    -- An array of SkinBone(s), initialized at SkinInterface.init()
-	_bones    = undefined,
-
-	-- Variable: ops
-    -- The access to the remixed skinOps.functions
-	ops       = undefined, -- skinops
-
-
 	/* group: Constructor methods */
 	/* Function: create/constructor
 
@@ -109,7 +86,7 @@ struct SkinInterface (
 	fn init iskin selected_bone_only:false selected_vertices_only:false = (
 		local ret = ReturnCode.new (classof(iskin) == Skin) err_reason:"SkinInterface.init takes a Skin as argument!"
 		if ret.ret then (
-			ret = SkinHelpers.isSkinInterfaceSelected()
+			ret = SkinHelpers.isSkinModifierSelected()
 			if ret.ret then (
 
 				-- Load node and skin
@@ -141,6 +118,28 @@ struct SkinInterface (
 	    	ReturnCode
 	*/
 	fn reload selected_bone_only:false selected_vertices_only:false = (this.init this._skin selected_vertices_only:selected_vertices_only selected_bone_only:selected_bone_only),
+
+
+	/* group: Class variables */
+	-- Variable: _node
+    -- The node holding the skin modifier
+	_node     = undefined,
+
+	-- Variable: _skin
+    -- The inner skin modifier
+	_skin     = undefined,
+
+	-- Variable: _vertices
+    -- An array of SkinVertex(s), initialized at SkinInterface.init()
+	_vertices = undefined,
+
+	-- Variable: _bones
+    -- An array of SkinBone(s), initialized at SkinInterface.init()
+	_bones    = undefined,
+
+	-- Variable: ops
+    -- The access to the remixed skinOps.functions
+	ops       = undefined, -- skinops
 
 
 	/* group: Public methods */
@@ -218,6 +217,18 @@ struct SkinInterface (
 		(ReturnCode ret:true data:data)
 	),
 
+	/* Function: getSkinVertex
+		Returns a SkinVertex given an id.
+
+	   Parameters:
+	    	id: - Integer to get the vertex from.
+
+	   Returns:
+	    	ReturnCode
+	*/	
+	fn getSkinVertex id = (this.getSkinVertexByID id),
+
+
 	/* Function: getSkinVertexByID
 		Returns a SkinVertex given an id.
 
@@ -231,6 +242,36 @@ struct SkinInterface (
 		local arr = for v in this._vertices where v._v == id collect v
 		(ReturnCode.new (arr.count > 0) err_reason:("No SkinVertex found with the id:#"+(id as string) + "!") ok_data:arr[1])
 	),
+
+
+
+	/* Function: getSkinVertexBone
+		Returns a getSkinVertexBone given a vertex id and a vertex_bone id.
+
+	   Parameters:
+	    	vid: - vertex_id
+	    	vbone - vertex_bone id
+
+	   Returns:
+	    	ReturnCode
+	*/	
+	fn getSkinVertexBone vid vbone = (this.getSkinVertexByID id),
+
+
+
+	/* Function: getSkinVertexBones
+		Returns all SkinVertexBone(s) given a vertex id.
+
+	   Parameters:
+	    	vid: - vertex_id
+
+	   Returns:
+	    	ReturnCode
+	*/	
+	fn getSkinVertexBones vid = (this.getSkinVertexByID id),
+
+
+
 
 	/* Function: addBone
 		Adds a new bone to the skin modifier. 
@@ -548,7 +589,7 @@ private
 
 		this._vertices = #()
 		for v in verticesSet do (
-			local sv = SkinVertex init_id:v _SkinInterface:this --sv.init v
+			local sv = SkinVertex init_id:v _skInt:this --sv.init v
 			append this._vertices (sv)
 		)
 		(ReturnCode.new (this._vertices.count == verticesSet.count) err_reason:"Something went wrong loading SkinVertex(s)")
@@ -565,7 +606,7 @@ private
 	*/
 	fn __load_bones selected_bone_only:false = (
 		local ret = ReturnCode ret:false
-		local bCount = this.ops.GetNumberBones()
+		local bCount = this.GetNumberBones()
 
 		this._bones = #()
 		for i=1 to bCount do (
@@ -586,9 +627,9 @@ private
 	*/
 
 public
-	on create do (this.ops = SkinInterfaceOps _skinmod:this)
+	on create do (this.ops = SkinInterfaceOps _skInt:this)
 )
 
 
---skm = SkinInterface()
---skm.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
+skm = SkinInterface()
+skm.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true

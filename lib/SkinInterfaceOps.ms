@@ -6,7 +6,7 @@ struct SkinInterfaceOps (
 
 	_skInt = undefined,
 
-	fn addBoneFromViewEnd                 = (skinOps.addBoneFromViewEnd                 this._skInt._skin),
+	/*fn addBoneFromViewEnd                 = (skinOps.addBoneFromViewEnd                 this._skInt._skin),
 	fn addBoneFromViewStart               = (skinOps.addBoneFromViewStart               this._skInt._skin),
 	fn bakeSelectedVerts                  = (skinOps.bakeSelectedVerts                  this._skInt._skin),
 
@@ -71,7 +71,7 @@ struct SkinInterfaceOps (
 	fn pasteAllBones b                    = (skinOps.pasteAllBones this._skInt._skin b), 
 	fn pasteAllVerts b                    = (skinOps.pasteAllVerts this._skInt._skin b), 
 
-	fn enableGizmo gizmo_id enable_bool   = (skinOps.enableGizmo this._skInt._skin gizmo_id enable_bool), 
+	fn enableGizmo gizmo_id enable_bool   = (skinOps.enableGizmo this._skInt._skin gizmo_id enable_bool), */
 	   
 	on create do ()
 )
