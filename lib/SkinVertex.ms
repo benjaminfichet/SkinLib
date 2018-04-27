@@ -37,7 +37,7 @@ struct SkinVertex (
 	on create do (
 		this._bones    = #()
 		if this.init_id != undefined then (
-			this.init this.init_id
+			this.init this.init_id this._skInt
 		)
 	),
   
@@ -55,16 +55,20 @@ struct SkinVertex (
 
 	    	<ReturnCode>
 	*/
-	fn init index skin_interface:undefined = (
+	--_bonesCount = undefined,
+	fn init index skin_interface = (
 		local ret = SkinHelpers.isSkinModifierSelected()
 
 		if ret.ret then (
-			--this._skInt = skin_interface
+			ret = ReturnCode.new ((classof skin_interface) == SkinInterface) \
+								 err_reason:"A skin_interface: must be passed either at creation or init()!"
 
-			-- Load Vertex infos
-			--------------------------------------------------------------------------
-			this._v          = index
-			this._load_vertex_bones()
+			if ret.ret then (
+				this._skInt      = skin_interface
+				this._v          = index
+				this._bonesCount = (skinOps.GetVertexWeightCount this._skInt._skin this._v)
+				this._load_vertex_bones()
+			)
 			-- end
 		)
 		ret
@@ -162,6 +166,7 @@ struct SkinVertex (
 		for i=1 to (this.getVertexBonesCount()) do (
 			
 			local bonID   = (skinOps.GetVertexWeightBoneID this._skInt._skin this._v i)
+			--print bonID
 			if bonID then (
 				-- Cross with the correct SkinBone already loaded!
 				local sBone = this._skInt.getSkinBone bonID
@@ -189,15 +194,15 @@ struct SkinVertex (
 	fn endfunc = ()
 )
 
-skMod = SkinInterface()
-skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
+--skMod = SkinInterface()
+--skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
 
 --struct ss (_skin)
 --mys = ss _skin:$ch_lewis_b00a_mdl_body.modifiers[#Skin]
 
-sv = SkinVertex()
-sv.init 10 _skInt:skMod
-sv.getVertexBoneByName "ch_lewis_b00a_help_spine_bone_05"
+--sv = SkinVertex()
+--sv.init 10 skMod
+--sv.getVertexBoneByName "ch_lewis_b00a_help_spine_bone_05"
 
 
 

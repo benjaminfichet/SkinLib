@@ -213,7 +213,7 @@ struct SkinInterface (
 	    	ReturnCode
 	*/
 	fn getSelectedVertices = (
-		local data = for i=1 to this._node.numverts where (skinOps.IsVertexSelected this._skin i) collect (SkinVertex init_id:i _SkinInterface:this)
+		local data = for i=1 to this._node.numverts where (skinOps.IsVertexSelected this._skin i) collect (SkinVertex init_id:i _skInt:this)
 		(ReturnCode ret:true data:data)
 	),
 
@@ -290,7 +290,7 @@ struct SkinInterface (
 
 	    	ReturnCode
 	*/	
-	fn addBone wannaBeBone redraw:false force:false reload_SkinInterface:true = (
+	fn addBone wannaBeBone redraw:false force:false reload_skInt:true = (
 		local nd = undefined
 		if (isKindof wannaBeBone Node) do (nd = wannaBeBone)
 		if (classof(wannaBeBone) == string or classOf(wannaBeBone) == name) do (nd = getNodeByName (wannaBeBone as string))
@@ -307,7 +307,7 @@ struct SkinInterface (
 					ret.ret = (this.ops.addBone nd redraw:redraw) == OK
 
 					-- In case we are importing a large bone set, we'll reload at the end!
-					if reload_SkinInterface == true then (this.reload())
+					if reload_skInt == true then (this.reload())
 				)
 			)
 		)
@@ -329,11 +329,11 @@ struct SkinInterface (
 
 	    	ReturnCode
 	*/	
-	fn removeSkinBone b reload_SkinInterface:true = (
+	fn removeSkinBone b reload_skInt:true = (
 		local ret = getSkinBone b
 		if ret.ret then (
 			skinOps.removebone this._skin ret.data._boneID
-			if reload_SkinInterface == true then (this.reload())
+			if reload_skInt == true then (this.reload())
 		)
 		ret
 	),
@@ -632,4 +632,4 @@ public
 
 
 skm = SkinInterface()
-skm.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
+skm.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
