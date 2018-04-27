@@ -3,12 +3,15 @@
 	modo.filein "SkinLib.lib.SkinVertexBone"
 )
 
+/* Sound: Hello */
+
 /* Class: SkinVertex
 
 	Represents a vertex of a Skin modifier.
 */
 struct SkinVertex (
 
+	-- Variable: _skinModifier 
 	-- Mother instance of type SkinModifier
 	_skinModifier = undefined,
 
@@ -44,10 +47,23 @@ struct SkinVertex (
     -- How many bones do skin this vertex ?
 	_bonesCount = undefined,
 
+	/* Function: Constructor <init_id:>
 
-	-- Constructor: Constructor<init_id:>
-	-- SkinVertex's init() is automatically called with <init_id:> if it is passed at creation. ie.: n = SkinVertex init_id:theID
-	--------------------------------------------------------------------------
+	   Parameters:
+
+	    	init_id: - The vertex's id to init from.
+
+	    Notes:
+
+    		If init_id: param is given at SkinVertex's creation, the init function is automatically called!
+    		--- Code
+		SkinVertex init_id:theID; -- Will call (this.init this.init_id)
+		---
+
+	   Returns:
+
+	    	void
+	*/
 	on create do (
 		this._bones    = #()
 		if this.init_id != undefined then (
@@ -56,11 +72,19 @@ struct SkinVertex (
 	),
   
 
-	-- Function: init(index)
-	-- 	Inits this SkinVertex, filling all data, and loading SkinVertexBone(s).
-	--
-	-- Parameters:
-	-- 	index - <integer> The vertex index to init from.
+	/* Function: init
+
+	    Init function, to be called after creation.
+	    Inits this SkinVertex, filling all data and loading SkinVertexBone(s).
+
+	   Parameters:
+
+	    	index: - The vertex's index to init from.
+
+	   Returns:
+
+	    	<ReturnCode>
+	*/
 	fn init index = (
 		local ret = SkinHelpers.isSkinModifierSelected()
 		if ret.ret then (
@@ -81,19 +105,19 @@ struct SkinVertex (
 	),
 
 
-	-- Function: reload()
+	-- Function: reload
 	-- Reloads this by re-initing with this._v (vertex index).
 	--------------------------------------------------------------------------
 	fn reload = (this.init this._v),
 
 
-	-- Function: safeModifyWeight(weight)
+	-- Function: safeModifyWeight
 	-- Loads all the <SkinVertexBone>(s) to this._bones.
 	--------------------------------------------------------------------------
 	fn safeModifyWeight w = (throw ("\n\n+ To Implement! +\n\n")),
 
 
-	-- Function: getVertexBoneForSkinBone(sbone)
+	-- Function: getVertexBoneForSkinBone
 	-- Returns the local vertex's bone for the given <sbone> SkinBone.
 	--------------------------------------------------------------------------
 	fn getVertexBoneForSkinBone sbone = (this.getVertexBoneByBoneID sbone._boneID),
@@ -113,8 +137,13 @@ struct SkinVertex (
 	fn getVertexBoneByListID id = (this.getVertexBoneBy #list_id id),
 
 
+	fn isRigidVertex       = (skinOps.isRigidVertex       this._skinModifier._skin this._v),
+	fn isUnNormalizeVertex = (skinOps.isUnNormalizeVertex this._skinModifier._skin this._v),
+	fn IsVertexModified    = (skinOps.IsVertexModified    this._skinModifier._skin this._v),
+	fn IsVertexSelected    = (skinOps.IsVertexSelected    this._skinModifier._skin this._v),
+	fn rigidVertex         = (skinOps.rigidVertex         this._skinModifier._skin this._v),
 
-	-- Function: _load_bones()
+	-- Function: _load_bones
 	-- *Private*: Loads all the <SkinVertexBone>(s) to this._bones.
 	--------------------------------------------------------------------------
 	fn _load_bones = (
@@ -122,7 +151,7 @@ struct SkinVertex (
 			local bonID   = (skinOps.GetVertexWeightBoneID this._skin this._v i)
 
 			-- Cross with the correct SkinBone already loaded!
-			local sBone = _skinModifier.getSkinBoneByBoneID bonID
+			local sBone = _skinModifier.getSkinBone bonID
 			sBone       = if sBone.ret then (sBone.data) else (-1) 
 			
 

@@ -1,11 +1,11 @@
-/* Struct: SkinVertexBone
+/* Class: SkinVertexBone
 
 	Represents a bone owned by a SkinVertex.
 */
 struct SkinVertexBone (
 
 	-- Variable: _name
-    -- The bone name ! DEPRECATED AS WE KNOW REFER TO _skinBone directly!
+    -- The bone name
 	_name         = undefined,
 
 	-- Variable: _weight
@@ -21,7 +21,7 @@ struct SkinVertexBone (
 	_vertexBoneID = undefined,
 
 	-- Variable: _boneID
-    -- The true bone index ! DEPRECATED we keep it just for ??
+    -- The true bone index
 	_boneID       = undefined,
 
 	-- Variable: _listID

@@ -1,18 +1,22 @@
+/* Class: SkinHelpers
+
+	Exposes various methods to work with 3dsmax's Skin modifier.
+*/
 struct SkinHelpers (
 
 
 
 	/* Function: isSkinModifierSelected
 
-	   Checks if the Skin modifier <skin_name> is selected.
+	   Checks if the Skin modifier *<skin_name>* is selected.
 
 	   Parameters:
 
-	    	skin_name: - Optional - Defaults to "Skin"
+	    	skin_name: Optional
 
 	   Returns:
 
-	    	True or False if the skin was selectionned or not
+	    	True or False if the skin is selected or not
 	*/
 	fn isSkinModifierSelected skin_name:undefined = (
 		local ret = ReturnCode.new (selection.count == 1) err_reason:"Invalid node selection!"
@@ -30,14 +34,14 @@ struct SkinHelpers (
 
 
 
-	/* Function: selectSkinmod
+	/* Function: selectSkinModifier
 
 	   Selects the given skin modifier in the modify panel.
 
 	   Parameters:
 
 	    	skn - The skin modifier to select.
-	    	node_index:1 - In canse there is multiple nodes referencing the skin, set which index to select
+	    	node_index:1 - In case there is multiple nodes referencing the skin, set which one to select
 
 	   Returns:
 
@@ -58,10 +62,10 @@ struct SkinHelpers (
 		ret
 	),
 
-	/* Function: fn prepareCommandPanelToNewSkin nd = ()
+	/* Function: prepareCommandPanelToNewSkin
 
-	   Prepares the command panel to the creation of a new skin modifier for the given <<nd>> by selecting the baseobject.
-	   If a #Morpher is present on the node, the morpher will be selected as the baseobject.
+	   Prepares the command panel to the creation of a new skin modifier for the given <nd|node> by selecting the baseobject.
+	   If a #Morpher is present on the node, the morpher will be selected as the baseobject so that any skin added will be on top of it.
 
 	   Parameters:
 
@@ -77,16 +81,50 @@ struct SkinHelpers (
 	),
 
 
+	/* Function: integerAsBoolean <i>
 
+	   Returns a boolean for a given integer. ie  (i > 0) = true, ( i < 0 ) = false
+		--- Code
+		if i > 0 then (true) else (false)
+		---
+
+
+	   Parameters:
+
+	    	i - The integer to convert from
+
+	   Returns:
+
+	    	true/false
+	*/
 	fn integerAsBoolean i = (
 		local ret = false
 		if i > 0 then (ret = true)
 		ret
 	),
 
-	fn booleanAsInteger b negativeOne:false = (
+
+	/* Function: booleanAsInteger
+
+	   Returns an integer for a given boolean. 
+
+		--- Code
+		if b == true then (true_int) else (false_int)
+		---
+
+	   Parameters:
+
+	    	b - The boolean to convert from
+	    	true_int:1  - The integer value to return if true (defaults to 1)
+	    	false_int:0 - The integer value to return if false (defaults to 0)
+
+	   Returns:
+
+	    	integer
+	*/
+	fn booleanAsInteger b true_int:1 false_int:0 = (
 		local ret = -1
-		if b == true  then ret = 1 else (if negativeOne then (ret = -1) else (ret = 0))
+		if b == true  then (ret = true_int) else (ret = false_int)
 		ret
 	),
 
