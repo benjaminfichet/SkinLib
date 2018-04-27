@@ -1,0 +1,1 @@
+NDFramePage.OnPageTitleLoaded("MXSClass:SkinInterfaceOps","SkinInterfaceOps");NDSummary.OnSummaryLoaded("MXSClass:SkinInterfaceOps",[["C/C++","MXS"]],[["Classes","Class"]],[[1,0,0,"SkinInterfaceOps"]]);

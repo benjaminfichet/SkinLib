@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isv",["Function"],[["IsVertexModified",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex.IsVertexModified","MXSClass:SkinVertex:IsVertexModified"]]],["IsVertexSelected",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex.IsVertexSelected","MXSClass:SkinVertex:IsVertexSelected"]]]]);

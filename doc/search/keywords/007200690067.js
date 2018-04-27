@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("rig",["Function"],[["rigidVertex",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex.rigidVertex","MXSClass:SkinVertex:rigidVertex"]]]]);

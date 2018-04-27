@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("int",["Function"],[["integerAsBoolean",,[["SkinHelpers",,,,0,"File:lib/SkinHelpers.ms:SkinHelpers.integerAsBoolean","MXSClass:SkinHelpers:integerAsBoolean"]]]]);

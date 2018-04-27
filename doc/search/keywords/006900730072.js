@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isr",["Function"],[["isRigidVertex",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex.isRigidVertex","MXSClass:SkinVertex:isRigidVertex"]]]]);

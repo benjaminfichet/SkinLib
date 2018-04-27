@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("isu",["Function"],[["isUnNormalizeVertex",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex.isUnNormalizeVertex","MXSClass:SkinVertex:isUnNormalizeVertex"]]]]);

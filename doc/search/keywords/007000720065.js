@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("pre",["Function"],[["prepareCommandPanelToNewSkin",,[["SkinHelpers",,,,0,"File:lib/SkinHelpers.ms:SkinHelpers.prepareCommandPanelToNewSkin","MXSClass:SkinHelpers:prepareCommandPanelToNewSkin"]]]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ops",["Variable"],[["ops",,[["SkinInterface",,,,0,"File:lib/SkinInterface.ms:SkinInterface.ops","MXSClass:SkinInterface:ops"]]]]);

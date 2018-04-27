@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_ge",["Function"],[["_getSkinInterface",,[["SkinBone",,,,0,"File:lib/SkinBone.ms:SkinBone._getSkinInterface","MXSClass:SkinBone:_getSkinInterface"]]]]);

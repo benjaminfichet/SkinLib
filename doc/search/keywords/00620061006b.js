@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("bak",["Function"],[["bakeVertex",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex.bakeVertex","MXSClass:SkinVertex:bakeVertex"]]]]);

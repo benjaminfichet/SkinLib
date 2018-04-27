@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_na",["Variable"],[["_name",,[["SkinBone",,,,0,"File:lib/SkinBone.ms:SkinBone._name","MXSClass:SkinBone:_name"],["SkinVertexBone",,,,0,"File:lib/SkinVertexBone.ms:SkinVertexBone._name","MXSClass:SkinVertexBone:_name"]]]]);

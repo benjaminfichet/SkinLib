@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("syn",["Information"],[["Synopsys",,[["SkinInterface",,,,0,"File:lib/SkinInterface.ms:SkinInterface.Synopsys","MXSClass:SkinInterface:Synopsys"]]]]);

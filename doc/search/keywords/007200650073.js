@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("res",["Function"],[["resetVertex",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex.resetVertex","MXSClass:SkinVertex:resetVertex"]]]]);

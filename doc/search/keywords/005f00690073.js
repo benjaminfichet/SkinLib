@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_is",["Function"],[["_is_range_valid_index",,[["SkinBone",,,,0,"File:lib/SkinBone.ms:SkinBone._is_range_valid_index","MXSClass:SkinBone:_is_range_valid_index"]]]]);

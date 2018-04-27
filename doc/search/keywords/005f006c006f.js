@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("_lo",["Function","Variable"],[["_load_vertex_bones",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex._load_vertex_bones","MXSClass:SkinVertex:_load_vertex_bones"]]],["_lock_weight",,[["SkinVertexBone",,,,1,"File:lib/SkinVertexBone.ms:SkinVertexBone._lock_weight","MXSClass:SkinVertexBone:_lock_weight"]]]]);

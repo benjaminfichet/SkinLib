@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("saf",["Function"],[["safeModifyWeight",,[["SkinVertex",,,,0,"File:lib/SkinVertex.ms:SkinVertex.safeModifyWeight","MXSClass:SkinVertex:safeModifyWeight"]]]]);
