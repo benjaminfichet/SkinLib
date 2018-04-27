@@ -2,6 +2,7 @@
 	local modo = Modolize init_path:(DEVTREE_BASEPATH)
 	
 	print (modo.filein "SkinLib.lib.SkinHelpers")
+	print (modo.filein "SkinLib.lib.SkinOwner")
 	print (modo.filein "SkinLib.lib.SkinBone")
 	print (modo.filein "SkinLib.lib.SkinVertex")
 	print (modo.filein "SkinLib.lib.SkinInterfaceOps")
@@ -86,12 +87,17 @@ struct SkinInterface (
 	fn init iskin selected_bone_only:false selected_vertices_only:false = (
 		local ret = ReturnCode.new (classof(iskin) == Skin) err_reason:"SkinInterface.init takes a Skin as argument!"
 		if ret.ret then (
-			ret = SkinHelpers.isSkinModifierSelected()
+			
+			-- Skin owner init
+			this._owner = SkinOwner()
+			ret = this._owner.initFromSkin iskin
+			--ret = SkinHelpers.isSkinModifierSelected()
+			
 			if ret.ret then (
 
 				-- Load node and skin
-				this._node = selection[1]
-				this._skin = modPanel.getCurrentObject()
+				this._node = this._owner.ownerNode    --selection[1]
+				this._skin = this._owner.skinModifier --modPanel.getCurrentObject()
 
 				-- Load Bones
 				ret = this.__load_bones selected_bone_only:selected_bone_only
@@ -121,6 +127,11 @@ struct SkinInterface (
 
 
 	/* group: Class variables */
+	-- Variable: _owner
+    -- The SkinOwner (node+skin)
+	_owner     = undefined,
+
+
 	-- Variable: _node
     -- The node holding the skin modifier
 	_node     = undefined,
