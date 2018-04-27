@@ -5,9 +5,9 @@
 struct SkinBone (
 private
 
-    -- Variable: _skinMod
-    -- The SkinModifier owning this SkinBone
-	_skinMod = undefined,
+    -- Variable: _skInt
+    -- The SkinInterface owning this SkinBone
+	_skInt = undefined,
 
 
 public
@@ -30,10 +30,10 @@ public
 	init_skin_modifier = undefined,
 
 	-- Constructor: Constructor<init_skin_modifier:>
-	-- SkinBone's _skinMod is automatically set with <init_skin_modifier:> if it is passed at creation. ie.: n = SkinBone init_skin_modifier:theStruct
+	-- SkinBone's _skInt is automatically set with <init_skin_modifier:> if it is passed at creation. ie.: n = SkinBone init_skin_modifier:theStruct
 	--------------------------------------------------------------------------
 	on create do (
-		if this.init_skin_modifier != undefined then (this._skinMod = this.init_skin_modifier)
+		if this.init_skin_modifier != undefined then (this._skInt = this.init_skin_modifier)
 	),
 
 
@@ -45,9 +45,9 @@ public
 	-- 	list_index: - <integer>     The list_id   to init from
 	-- 	bone_name:  - <string/name> The bone_name to init from
 	--------------------------------------------------------------------------
-	fn init bone_index: list_index: bone_name: skinModifier: = (
+	fn init bone_index: list_index: bone_name: SkinInterface: = (
 
-		if ((skinModifier == unsupplied) and (this._skinMod == undefined)) then (throw "SkinBone._skinMod must be set!")
+		if ((SkinInterface == unsupplied) and (this._skInt == undefined)) then (throw "SkinBone._skInt must be set!")
 
 		local bi_test = (bone_index != unsupplied) and (classof(bone_index as integer) == integer)
 		local li_test = (list_index != unsupplied) and (classof(list_index as integer) == integer)
@@ -66,10 +66,10 @@ public
 	-- 	Returns an array of SkinVertex(s) influenced by this SkinBone
 	--------------------------------------------------------------------------
 	fn getInfluencedVertices = (
-		local ret = ReturnCode.new (this._skinMod != undefined) err_reason:"SkinBone.getInfluencedVertices() need _skinMod to be defined! (_setSkinModifier())"
+		local ret = ReturnCode.new (this._skInt != undefined) err_reason:"SkinBone.getInfluencedVertices() need _skInt to be defined! (_setSkinInterface())"
 		if ret.ret then (
 			local verts = #()
-			for skinVert in this._skinMod._vertices do (
+			for skinVert in this._skInt._vertices do (
 				for vBone in skinVert._bones do (
 					if (vBone._name as name) == (this._name as name) then (
 						append verts skinVert
@@ -97,8 +97,8 @@ public
 		local ret = this._is_range_valid_index id
 		if ret.ret then (
 			this._boneID = id
-			this._listID = this._skinMod.ops.GetListIDByBoneID id
-			this._name   = (this._skinMod.ops.GetBoneName id) as name
+			this._listID = this._skInt.ops.GetListIDByBoneID id
+			this._name   = (this._skInt.ops.GetBoneName id) as name
 		)
 		ret
 	),
@@ -110,8 +110,8 @@ public
 		local ret = this._is_range_valid_index id
 		if ret.ret then (
 			this._listID = id 
-			this._boneID = this._skinMod.ops.GetBoneIDByListID id
-			this._name   = (this._skinMod.ops.GetBoneName this._boneID) as name
+			this._boneID = this._skInt.ops.GetBoneIDByListID id
+			this._name   = (this._skInt.ops.GetBoneName this._boneID) as name
 		)
 		ret
 	),
@@ -123,8 +123,8 @@ public
 		local ret = ReturnCode.new (classof(nm) == Name or classof(nm) == String) err_reason:"Invalid arg passed SkinBone.init_by_bone_name!"
 		if ret.ret then (
 			local idx = -1
-			for i=1 to (this._skinMod.ops.GetNumberBones()) do (
-				if (((this._skinMod.ops.GetBoneName i) as name) == nm) then (idx = i)
+			for i=1 to (this._skInt.ops.GetNumberBones()) do (
+				if (((this._skInt.ops.GetBoneName i) as name) == nm) then (idx = i)
 			)
 
 			ret = ReturnCode.new (idx > 0) -- err_reason:"Unable to initialize from: " + nm as string + " (bone not found)!"
@@ -133,25 +133,25 @@ public
 
 				this._name   = nm as name
 				this._boneID = idx
-				this._listID = this._skinMod.ops.GetListIDByBoneID idx
+				this._listID = this._skInt.ops.GetListIDByBoneID idx
 			)
 		)
 		ret
 	),
 
-	-- Function: _getSkinModifier()
-	-- 	A SkinBone object needs a SkinModifier in ._skinMod, this is how to get it
+	-- Function: _getSkinInterface()
+	-- 	A SkinBone object needs a SkinInterface in ._skInt, this is how to get it
 	--------------------------------------------------------------------------
-	fn _getSkinModifier    = (this._skinMod),
+	fn _getSkinInterface    = (this._skInt),
 
-	-- Function: _setSkinModifier(sm)
-	-- 	A SkinBone object needs a SkinModifier in ._skinMod, this is how to set it
+	-- Function: _setSkinInterface(sm)
+	-- 	A SkinBone object needs a SkinInterface in ._skInt, this is how to set it
 	--------------------------------------------------------------------------
-	fn _setSkinModifier sm = (this._skinMod = sm),
+	fn _setSkinInterface sm = (this._skInt = sm),
 
 
 
-	fn isBoneSelected = (skinOps.isBoneSelected this._skinMod._skin this._boneID),
+	fn isBoneSelected = (skinOps.isBoneSelected this._skInt._skin this._boneID),
 	
 
 private
@@ -159,13 +159,13 @@ private
     -- Function: _is_range_valid_index(i)
 	-- 	Checks that the given id is in the range 0..bone_count
 	--------------------------------------------------------------------------
-	fn _is_range_valid_index i = (ReturnCode.new ((i > 0) and (i <= this._skinMod.ops.GetNumberBones())) err_reason:"Invalid bone index range!"),
+	fn _is_range_valid_index i = (ReturnCode.new ((i > 0) and (i <= this._skInt.ops.GetNumberBones())) err_reason:"Invalid bone index range!"),
 
 	fn end = ()
 )
 
 
---skMod = SkinModifier()
+--skMod = SkinInterface()
 --res = skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
 --
 --skb = SkinBone init_skin_modifier:skMod

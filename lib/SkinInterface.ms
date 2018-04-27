@@ -4,10 +4,10 @@
 	print (modo.filein "SkinLib.lib.SkinHelpers")
 	print (modo.filein "SkinLib.lib.SkinBone")
 	print (modo.filein "SkinLib.lib.SkinVertex")
-	print (modo.filein "SkinLib.lib.SkinModifierOps")
+	print (modo.filein "SkinLib.lib.SkinInterfaceOps")
 )
 
-/* Class: SkinModifier
+/* Class: SkinInterface
 
 	About: Synopsys
 	Represents a Skin modifier, has a lot of useful custom made functions to work with Skin modifiers.
@@ -16,13 +16,13 @@
 	--- code
 	-- Original/Customized prototypes :
 	skinOps.GetOuterRadius <Skin> <bone_integer> <CrossSectionID_integer> 
-	SkinModifier.GetOuterRadius <bone_integer/bone_name/SkinBone> <CrossSectionID_integer> 
+	SkinInterface.GetOuterRadius <bone_integer/bone_name/SkinBone> <CrossSectionID_integer> 
 	---
 
 	About: Exemples
 
 	--- code
-	skMod = SkinModifier()
+	skMod = SkinInterface()
 	skMod.init ($ch_xxxx_b00a_xxx_body.modifiers[#Skin]) selected_vertices_only:false
 
 	outerRadius = skMod.GetOuterRadius "theBoneName" section_id
@@ -39,13 +39,13 @@
 	---
 
 */
-struct SkinModifier (
+struct SkinInterface (
 
 
 	
 	/* group: Constructor variable */
 	-- Variable: init_skin
-    -- Constructor param, if this is set at SkinModifier creation, the init method is automatically called with it
+    -- Constructor param, if this is set at SkinInterface creation, the init method is automatically called with it
 	init_skin = undefined,
 
 
@@ -59,11 +59,11 @@ struct SkinModifier (
 	_skin     = undefined,
 
 	-- Variable: _vertices
-    -- An array of SkinVertex(s), initialized at SkinModifier.init()
+    -- An array of SkinVertex(s), initialized at SkinInterface.init()
 	_vertices = undefined,
 
 	-- Variable: _bones
-    -- An array of SkinBone(s), initialized at SkinModifier.init()
+    -- An array of SkinBone(s), initialized at SkinInterface.init()
 	_bones    = undefined,
 
 	-- Variable: ops
@@ -80,9 +80,9 @@ struct SkinModifier (
 
 	    Notes:
 
-    		If init_skin: param is given at SkinModifier creation, the init function is automatically called!
+    		If init_skin: param is given at SkinInterface creation, the init function is automatically called!
     	--- Code
-		SkinModifier init_skin:theSkin; -- Will call (this.init this.init_skin)
+		SkinInterface init_skin:theSkin; -- Will call (this.init this.init_skin)
 		---
 
 	   Returns:
@@ -95,7 +95,7 @@ struct SkinModifier (
 
 
 	/* Function: init
-		Initialization method. Must be called after SkinModifier creation if init_skin: was not passed to its constructor.
+		Initialization method. Must be called after SkinInterface creation if init_skin: was not passed to its constructor.
 
 	   Parameters:
 
@@ -107,9 +107,9 @@ struct SkinModifier (
 	    	ReturnCode
 	*/
 	fn init iskin selected_bone_only:false selected_vertices_only:false = (
-		local ret = ReturnCode.new (classof(iskin) == Skin) err_reason:"SkinModifier.init takes a Skin as argument!"
+		local ret = ReturnCode.new (classof(iskin) == Skin) err_reason:"SkinInterface.init takes a Skin as argument!"
 		if ret.ret then (
-			ret = SkinHelpers.isSkinModifierSelected()
+			ret = SkinHelpers.isSkinInterfaceSelected()
 			if ret.ret then (
 
 				-- Load node and skin
@@ -131,7 +131,7 @@ struct SkinModifier (
 	),
 
 	/* Function: reload
-		Reloads this SkinModifier instance. (Re-call init())
+		Reloads this SkinInterface instance. (Re-call init())
 
 	   Parameters:
 	    	selected_bone_only:false - Will only load selected bone.
@@ -214,7 +214,7 @@ struct SkinModifier (
 	    	ReturnCode
 	*/
 	fn getSelectedVertices = (
-		local data = for i=1 to this._node.numverts where (skinOps.IsVertexSelected this._skin i) collect (SkinVertex init_id:i _skinModifier:this)
+		local data = for i=1 to this._node.numverts where (skinOps.IsVertexSelected this._skin i) collect (SkinVertex init_id:i _SkinInterface:this)
 		(ReturnCode ret:true data:data)
 	),
 
@@ -249,7 +249,7 @@ struct SkinModifier (
 
 	    	ReturnCode
 	*/	
-	fn addBone wannaBeBone redraw:false force:false reload_skinmodifier:true = (
+	fn addBone wannaBeBone redraw:false force:false reload_SkinInterface:true = (
 		local nd = undefined
 		if (isKindof wannaBeBone Node) do (nd = wannaBeBone)
 		if (classof(wannaBeBone) == string or classOf(wannaBeBone) == name) do (nd = getNodeByName (wannaBeBone as string))
@@ -266,7 +266,7 @@ struct SkinModifier (
 					ret.ret = (this.ops.addBone nd redraw:redraw) == OK
 
 					-- In case we are importing a large bone set, we'll reload at the end!
-					if reload_skinmodifier == true then (this.reload())
+					if reload_SkinInterface == true then (this.reload())
 				)
 			)
 		)
@@ -274,7 +274,7 @@ struct SkinModifier (
 	),
 
 	/* Function: removeSkinBone
-		Removes a bone from a SkinModifier, triggers a reload(). 
+		Removes a bone from a SkinInterface, triggers a reload(). 
 		The bone can be specified by bone_id, name, or SkinBone instance.
 
 	   Parameters:
@@ -288,11 +288,11 @@ struct SkinModifier (
 
 	    	ReturnCode
 	*/	
-	fn removeSkinBone b reload_skinmodifier:true = (
+	fn removeSkinBone b reload_SkinInterface:true = (
 		local ret = getSkinBone b
 		if ret.ret then (
 			skinOps.removebone this._skin ret.data._boneID
-			if reload_skinmodifier == true then (this.reload())
+			if reload_SkinInterface == true then (this.reload())
 		)
 		ret
 	),
@@ -548,7 +548,7 @@ private
 
 		this._vertices = #()
 		for v in verticesSet do (
-			local sv = SkinVertex init_id:v _skinModifier:this --sv.init v
+			local sv = SkinVertex init_id:v _SkinInterface:this --sv.init v
 			append this._vertices (sv)
 		)
 		(ReturnCode.new (this._vertices.count == verticesSet.count) err_reason:"Something went wrong loading SkinVertex(s)")
@@ -586,12 +586,9 @@ private
 	*/
 
 public
-	on create do (this.ops = SkinModifierOps _skinmod:this)
+	on create do (this.ops = SkinInterfaceOps _skinmod:this)
 )
 
 
-skm = SkinModifier()
-skm.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false*
-
-
-
+--skm = SkinInterface()
+--skm.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false

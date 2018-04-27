@@ -11,9 +11,9 @@
 */
 struct SkinVertex (
 
-	-- Variable: _skinModifier 
-	-- Mother instance of type SkinModifier
-	_skinModifier = undefined,
+	-- Variable: _skInt 
+	-- Mother instance of type SkinInterface
+	_skInt = undefined,
 
 	-- Variable: init_id
     -- The constructor optional parameter
@@ -86,7 +86,7 @@ struct SkinVertex (
 	    	<ReturnCode>
 	*/
 	fn init index = (
-		local ret = SkinHelpers.isSkinModifierSelected()
+		local ret = SkinHelpers.isSkinInterfaceSelected()
 		if ret.ret then (
 
 			-- Load Vertex infos
@@ -137,11 +137,11 @@ struct SkinVertex (
 	fn getVertexBoneByListID id = (this.getVertexBoneBy #list_id id),
 
 
-	fn isRigidVertex       = (skinOps.isRigidVertex       this._skinModifier._skin this._v),
-	fn isUnNormalizeVertex = (skinOps.isUnNormalizeVertex this._skinModifier._skin this._v),
-	fn IsVertexModified    = (skinOps.IsVertexModified    this._skinModifier._skin this._v),
-	fn IsVertexSelected    = (skinOps.IsVertexSelected    this._skinModifier._skin this._v),
-	fn rigidVertex         = (skinOps.rigidVertex         this._skinModifier._skin this._v),
+	fn isRigidVertex       = (skinOps.isRigidVertex       this._skInt._skin this._v),
+	fn isUnNormalizeVertex = (skinOps.isUnNormalizeVertex this._skInt._skin this._v),
+	fn IsVertexModified    = (skinOps.IsVertexModified    this._skInt._skin this._v),
+	fn IsVertexSelected    = (skinOps.IsVertexSelected    this._skInt._skin this._v),
+	fn rigidVertex         = (skinOps.rigidVertex         this._skInt._skin this._v),
 
 	-- Function: _load_bones
 	-- *Private*: Loads all the <SkinVertexBone>(s) to this._bones.
@@ -151,7 +151,7 @@ struct SkinVertex (
 			local bonID   = (skinOps.GetVertexWeightBoneID this._skin this._v i)
 
 			-- Cross with the correct SkinBone already loaded!
-			local sBone = _skinModifier.getSkinBone bonID
+			local sBone = _skInt.getSkinBone bonID
 			sBone       = if sBone.ret then (sBone.data) else (-1) 
 			
 
@@ -170,12 +170,12 @@ struct SkinVertex (
 	fn endfunc = ()
 )
 
---skMod = SkinModifier()
+--skMod = SkinInterface()
 --skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
 --
 --
 --
---sv = SkinVertex init_id:9 _skinModifier:skMod
+--sv = SkinVertex init_id:9 _skInt:skMod
 --sv.getVertexBoneByName "ch_lewis_b00a_help_spine_bone_05"
 --
 --
