@@ -59,7 +59,7 @@ struct SkinVertex (
 		local ret = SkinHelpers.isSkinModifierSelected()
 
 		if ret.ret then (
-			this._skInt = skin_interface
+			--this._skInt = skin_interface
 
 			-- Load Vertex infos
 			--------------------------------------------------------------------------
@@ -144,6 +144,8 @@ struct SkinVertex (
 	-- Function: rigidVertex
 	fn rigidVertex         = (skinOps.rigidVertex         this._skInt._skin this._v),
 
+	fn getVertexBonesCount = (skinOps.GetVertexWeightCount this._skInt._skin this._v),
+
 	-- Function: bakeVertex
 	fn bakeVertex         = (),
 
@@ -157,28 +159,29 @@ struct SkinVertex (
 	-- *Private*: Loads all the <SkinVertexBone>(s) to this._bones.
 	--------------------------------------------------------------------------
 	fn _load_vertex_bones = (
-		for i=1 to this._bones.Count do (
+		for i=1 to (this.getVertexBonesCount()) do (
 			
-			local bonID   = (skinOps.GetVertexWeightBoneID this._skin this._v i)
+			local bonID   = (skinOps.GetVertexWeightBoneID this._skInt._skin this._v i)
+			if bonID then (
+				-- Cross with the correct SkinBone already loaded!
+				local sBone = this._skInt.getSkinBone bonID
+				sBone       = if sBone.ret then (sBone.data) else (-1) 
+				
 
-			-- Cross with the correct SkinBone already loaded!
-			local sBone = this._skInt.getSkinBone bonID
-			sBone       = if sBone.ret then (sBone.data) else (-1) 
-			
-
-			local list_id = (skinOps.GetListIDByBoneID this._skInt._skin bonID)
-			local namm    = (skinOps.GetBoneName        this._skInt._skin bonID 0)
-			local ww      = (skinops.getvertexweight   this._skInt._skin this._v i)
+				local list_id = (skinOps.GetListIDByBoneID  this._skInt._skin bonID)
+				local namm    = (skinOps.GetBoneName        this._skInt._skin bonID 0)
+				local ww      = (skinops.getvertexweight    this._skInt._skin this._v i)
 
 
-			local bnmodel = (SkinVertexBone _skinVertex:this \
-											_vertexBoneID:i \
-											_boneID:bonID \
-											_listID:list_id \
-											_name:(namm as name) \
-											_weight:ww \
-											_skinBone:sBone)
-			append this._bones bnmodel
+				local bnmodel = (SkinVertexBone _skinVertex:this \
+												_vertexBoneID:i \
+												_boneID:bonID \
+												_listID:list_id \
+												_name:(namm as name) \
+												_weight:ww \
+												_skinBone:sBone)
+				append this._bones bnmodel
+			)
 		)
 	),
 
@@ -189,10 +192,12 @@ struct SkinVertex (
 skMod = SkinInterface()
 skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
 
+--struct ss (_skin)
+--mys = ss _skin:$ch_lewis_b00a_mdl_body.modifiers[#Skin]
 
-
-sv = SkinVertex init_id:9 _skInt:skMod
---sv.getVertexBoneByName "ch_lewis_b00a_help_spine_bone_05"
+sv = SkinVertex()
+sv.init 10 _skInt:skMod
+sv.getVertexBoneByName "ch_lewis_b00a_help_spine_bone_05"
 
 
 

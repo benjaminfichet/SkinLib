@@ -167,12 +167,12 @@ private
 )
 
 
---skMod = SkinInterface()
---res = skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
+skMod = SkinInterface()
+res = skMod.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:false
 --
---skb = SkinBone init_skin_modifier:skMod
---
---skb.init bone_index:1
+skb = SkinBone init_skin_modifier:skMod
+
+skb.init bone_index:1
 --skb.init list_index:1
 ----skb.init bone_name:#ch_lewis_b00a_help_spine_bone_02
 --skb.getInfluencedVertices()
