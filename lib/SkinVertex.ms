@@ -1,7 +1,7 @@
-(
+/*(
 	local modo = Modolize init_path:(DEVTREE_BASEPATH)
 	modo.filein "SkinLib.lib.SkinVertexBone"
-)
+)*/
 
 /* Sound: Hello */
 
@@ -157,8 +157,17 @@ struct SkinVertex (
 	fn resetVertex         = (),
 
 
-
 	/* group: Private methods */
+	fn _orderSkinBonesByWeight svb1 svb2 = (
+		local ret = 0
+		
+		if (svb1._weight > svb2._weight) then (ret = -1)
+		if (svb1._weight < svb2._weight) then (ret = 1)
+		
+		ret
+	),
+
+
 	-- Function: _load_vertex_bones
 	-- *Private*: Loads all the <SkinVertexBone>(s) to this._bones.
 	--------------------------------------------------------------------------
@@ -188,6 +197,9 @@ struct SkinVertex (
 				append this._bones bnmodel
 			)
 		)
+
+		qsort this._bones this._orderSkinBonesByWeight
+		true
 	),
 
 	--------------------------------------------------------------------------

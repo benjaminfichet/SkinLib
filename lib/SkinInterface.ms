@@ -642,5 +642,5 @@ public
 )
 
 
-skm = SkinInterface()
-skm.init ($ch_lewis_b00a_mdl_body.modifiers[#Skin]) selected_vertices_only:true
+--skm = SkinInterface()
+--skm.init ($Plane001.modifiers[#Skin]) selected_vertices_only:false

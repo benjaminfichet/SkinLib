@@ -34,7 +34,7 @@ struct SkinOwner (
 		ret
 	),
 
-private
+--private
 	fn _getSkinNode skn node_index:1 = (
 		local rdeps = refs.dependentNodes this.skinModifier
 
@@ -57,5 +57,5 @@ public
 	on create do ()
 )
 
-s = SkinOwner()
-s.initFromNode $
+--s = SkinOwner()
+--s.initFromNode $
